@@ -32,7 +32,7 @@ COPY . .
 ## Build the static site.
 RUN npm run build
 
-# Stage 3a: Serve with `docusaurus serve`.
+# Stage 3: Serve with nodemon.
 FROM prod as serve
 ## Set the working directory to `/opt/docusaurus`.
 WORKDIR /opt/docusaurus
@@ -49,7 +49,7 @@ EXPOSE 3000
 ## Add node_modules/.bin to PATH
 ENV PATH="/opt/docusaurus/node_modules/.bin:${PATH}"
 ## Run the production server with nodemon for automatic rebuilding.
-CMD ["nodemon", "--watch", "./", "--exec", "npm run build && npm run serve -- --host 0.0.0.0 --no-open"]
+CMD ["nodemon", "--config", "nodemon.json"]
 
 ## Keep the container running indefinitely
 # CMD ["tail", "-f", "/dev/null"]

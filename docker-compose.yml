@@ -15,4 +15,4 @@ services:
       - /opt/docusaurus/build
     environment:
       - NODE_ENV=${NODE_ENV:-production}
-    command: npm run build && npm run serve -- --host 0.0.0.0 --no-open
+    command: nodemon --config nodemon.json
