@@ -27,6 +27,8 @@ WORKDIR /opt/docusaurus
 COPY package*.json ./
 ## Install dependencies with `--immutable` to ensure reproducibility.
 RUN npm ci
+## Install Docusaurus CLI globally
+RUN npm install -g @docusaurus/cli
 ## Copy over the rest of the source code.
 COPY . .
 ## Build the static site.
