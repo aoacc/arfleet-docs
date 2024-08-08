@@ -48,8 +48,11 @@ RUN npm run build
 EXPOSE 3000
 ## Add node_modules/.bin to PATH
 # ENV PATH="/opt/docusaurus/node_modules/.bin:${PATH}"
-## Run the production server.
-CMD ["npm", "run", "serve", "--", "--host", "0.0.0.0", "--no-open"]
+# ## Run the production server.
+# CMD ["npm", "run", "serve", "--", "--host", "0.0.0.0", "--no-open"]
+
+## Keep the container running indefinitely
+CMD ["tail", "-f", "/dev/null"]
 # # Stage 3b: Serve with Caddy.
 # FROM caddy:2-alpine as caddy
 # ## Copy the Caddyfile.
