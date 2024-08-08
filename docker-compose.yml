@@ -12,4 +12,4 @@ services:
       - /opt/docusaurus/node_modules
     environment:
       - NODE_ENV=${NODE_ENV:-production}
-    # command: ${DOCKER_COMMAND:-npm run serve -- --host 0.0.0.0 --no-open}
+    command: npm run build && npm run serve -- --host 0.0.0.0 --no-open

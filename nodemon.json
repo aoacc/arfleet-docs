@@ -1,0 +1,5 @@
+{
+    "watch": ["./docs", "./blog", "./src"],
+    "ext": "md,js,jsx,ts,tsx,json",
+    "exec": "npm run build && npm run serve -- --host 0.0.0.0 --no-open"
+  }
