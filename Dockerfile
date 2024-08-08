@@ -27,8 +27,6 @@ WORKDIR /opt/docusaurus
 COPY package*.json ./
 ## Install dependencies with `--immutable` to ensure reproducibility.
 RUN npm ci
-## Install Docusaurus CLI globally
-RUN npm install -g @docusaurus/cli
 ## Copy over the rest of the source code.
 COPY . .
 ## Build the static site.
@@ -38,8 +36,10 @@ RUN npm run build
 FROM prod as serve
 ## Expose the port that Docusaurus will run on.
 EXPOSE 3000
+## Add node_modules/.bin to PATH
+ENV PATH="/opt/docusaurus/node_modules/.bin:${PATH}"
 ## Run the production server.
-CMD ["npm", "run", "serve", "--", "--host", "0.0.0.0", "--no-open"]
+CMD ["docusaurus", "serve", "--host", "0.0.0.0", "--no-open"]
 
 # Stage 3b: Serve with Caddy.
 FROM caddy:2-alpine as caddy
