@@ -11,4 +11,4 @@ services:
       - ./:/opt/docusaurus:ro
     environment:
       - NODE_ENV=${NODE_ENV:-production}
-    command: ${DOCKER_COMMAND:-npm run serve -- --host 0.0.0.0 --no-open}
+    # command: ${DOCKER_COMMAND:-npm run serve -- --host 0.0.0.0 --no-open}
