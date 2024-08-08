@@ -23,10 +23,12 @@ CMD [ -d "node_modules" ] && npm run start --host 0.0.0.0 --poll 1000 || npm run
 FROM base as prod
 ## Set the working directory to `/opt/docusaurus`.
 WORKDIR /opt/docusaurus
-## Copy over the source code.
-COPY . /opt/docusaurus/
+## Copy over the package.json and package-lock.json (if exists)
+COPY package*.json ./
 ## Install dependencies with `--immutable` to ensure reproducibility.
 RUN npm ci
+## Copy over the rest of the source code.
+COPY . .
 ## Build the static site.
 RUN npm run build
 
@@ -43,4 +45,3 @@ FROM caddy:2-alpine as caddy
 COPY --from=prod /opt/docusaurus/Caddyfile /etc/caddy/Caddyfile
 ## Copy the Docusaurus build output.
 COPY --from=prod /opt/docusaurus/build /var/docusaurus
-
