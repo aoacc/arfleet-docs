@@ -34,10 +34,20 @@ RUN npm run build
 
 # Stage 3a: Serve with `docusaurus serve`.
 FROM prod as serve
+## Set the working directory to `/opt/docusaurus`.
+WORKDIR /opt/docusaurus
+## Copy over the package.json and package-lock.json (if exists)
+COPY package*.json ./
+## Install dependencies with `--immutable` to ensure reproducibility.
+RUN npm ci
+## Copy over the rest of the source code.
+COPY . .
+## Build the static site.
+RUN npm run build
 ## Expose the port that Docusaurus will run on.
 EXPOSE 3000
 ## Add node_modules/.bin to PATH
-ENV PATH="/opt/docusaurus/node_modules/.bin:${PATH}"
+# ENV PATH="/opt/docusaurus/node_modules/.bin:${PATH}"
 ## Run the production server.
 CMD ["npm", "run", "serve", "--", "--host", "0.0.0.0", "--no-open"]
 # # Stage 3b: Serve with Caddy.
