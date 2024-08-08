@@ -41,9 +41,9 @@ ENV PATH="/opt/docusaurus/node_modules/.bin:${PATH}"
 ## Run the production server.
 CMD ["/opt/docusaurus/node_modules/.bin/docusaurus", "serve", "--host", "0.0.0.0", "--no-open"]
 
-# Stage 3b: Serve with Caddy.
-FROM caddy:2-alpine as caddy
-## Copy the Caddyfile.
-COPY --from=prod /opt/docusaurus/Caddyfile /etc/caddy/Caddyfile
-## Copy the Docusaurus build output.
-COPY --from=prod /opt/docusaurus/build /var/docusaurus
+# # Stage 3b: Serve with Caddy.
+# FROM caddy:2-alpine as caddy
+# ## Copy the Caddyfile.
+# COPY --from=prod /opt/docusaurus/Caddyfile /etc/caddy/Caddyfile
+# ## Copy the Docusaurus build output.
+# COPY --from=prod /opt/docusaurus/build /var/docusaurus
