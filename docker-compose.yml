@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  docusaurus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ${DOCKER_TARGET:-serve}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/opt/docusaurus:ro
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+    command: ${DOCKER_COMMAND:-npm run serve -- --host 0.0.0.0 --no-open}
+
+  caddy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./volumes/caddy/data:/data
+      - ./volumes/caddy/config:/config
