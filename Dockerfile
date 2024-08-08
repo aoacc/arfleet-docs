@@ -39,7 +39,7 @@ EXPOSE 3000
 ## Add node_modules/.bin to PATH
 ENV PATH="/opt/docusaurus/node_modules/.bin:${PATH}"
 ## Run the production server.
-CMD ["docusaurus", "serve", "--host", "0.0.0.0", "--no-open"]
+CMD ["/opt/docusaurus/node_modules/.bin/docusaurus", "serve", "--host", "0.0.0.0", "--no-open"]
 
 # Stage 3b: Serve with Caddy.
 FROM caddy:2-alpine as caddy
