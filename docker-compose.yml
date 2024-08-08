@@ -10,6 +10,7 @@ services:
     volumes:
       - ./:/opt/docusaurus:ro
       - /opt/docusaurus/node_modules
+      - /opt/docusaurus/.docusaurus
     environment:
       - NODE_ENV=${NODE_ENV:-production}
     command: npm run build && npm run serve -- --host 0.0.0.0 --no-open
