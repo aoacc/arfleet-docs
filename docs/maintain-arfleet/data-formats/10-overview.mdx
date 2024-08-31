@@ -4,19 +4,19 @@
 
 This section explains how the data is passed to providers and stored in ArFleet.
 
-There are several standards involved, and the storage looks like a nested doll consisting of several layers.
-
-Care is needed to align all layers precisely.
+There are several standards involved, and the full storage structure looks like a nested doll consisting of several layers. Extra care is needed to align all layers precisely.
 
 ## ArFleet Reassembly Protocol
 
-Before we begin: multiple times we have to operate on chunks of data of different sizes. There are two challenges associated with this:
+Before we begin: multiple times we have to operate on chunks of data of different sizes. There are a few challenges associated with this:
 
 1. To read the underlying data, we need to reassemble them into blobs of data prior to chunking them, and thus we need to store this information. The economic burden of storing this information should be on the client
 
 2. [ANS-104 DataItems](https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md) do not support partial data integrity proofs (e.g. for HTTP Range requests), since the final layer of DeepHash is a rolling SHA-384 hash of the whole data. We need a way to serve partial data in a trustless way, without burdening existing gateway infrastructure with immediate upgrades.
 
-This extra information is stored using ArFleet Reassembly Protocol.
+3. Some layer outputs (like RSA and AES) force the final chunk size to be the same size (usually the key size), regardless of the underlying input data, which loses information on what the original data length was after decryption.
+
+The extra information intended to help in reassembling the original data is stored using ArFleet Reassembly Protocol.
 
 ArFleet Reassembly Protocol is a binary protocol encoding a manifest of a tree of chunk hashes to assemble them into a single blob of raw data of arbitrary size.
 
