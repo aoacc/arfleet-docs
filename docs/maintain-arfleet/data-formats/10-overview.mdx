@@ -46,8 +46,6 @@ It might happen on occasion that the manifest itself is too large to fit into a 
 
 ### 1. Placement
 
-> **Required:** *Yes*
-
 The outermost layer is the placement data. It's a Merkle tree of chunks of `PLACEMENT_CHUNK_SIZE` size (8192 bytes by default).
 
 The root hash of this tree is what gets signed in the Placement Deal and verification challenges are issued for it.
@@ -55,8 +53,6 @@ The root hash of this tree is what gets signed in the Placement Deal and verific
 > *Implementation detail*: To defend from the second preimage attack, the branch containing leafs is a hash over `[0x00 ++ left leaf ++ right leaf]`, else over `[left branch ++ right branch].
 
 ### 2. RSA Encapsulation
-
-> **Required:** *No*
 
 Every `PLACEMENT_CHUNK_SIZE` byte is encrypted with RSA for anti-Sybil protection purposes (see [Replica Encryption](/docs/learn-arfleet/replica-encryption)).
 
