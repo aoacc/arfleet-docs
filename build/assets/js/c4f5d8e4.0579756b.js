@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkarfleet_docs=self.webpackChunkarfleet_docs||[]).push([[2634],{192:(e,s,r)=>{r.r(s),r.d(s,{default:()=>u});r(6540);var t=r(6347),c=r(4848);function u(){return(0,c.jsx)(t.rd,{to:"/docs/home"})}}}]);

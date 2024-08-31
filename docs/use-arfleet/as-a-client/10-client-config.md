@@ -1,3 +1,0 @@
-# Client Configuration
-
-## Client Configuration

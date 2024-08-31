@@ -1,3 +1,0 @@
-# Provider Configuration
-
-## Provider Configuration

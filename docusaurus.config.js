@@ -58,17 +58,23 @@ const config = {
 
   presets: [
     [
-      'classic',
-      /** @type {import('@docusaurus/preset-classic').Options} */
-      ({
+      '@docusaurus/preset-classic',
+      {
         docs: {
           sidebarPath: './sidebars.js',
           remarkPlugins: [remarkMath],
           rehypePlugins: [rehypeKatex],
+          // Add the following lines:
+          beforeDefaultRemarkPlugins: [],
+          beforeDefaultRehypePlugins: [],
+
+
+          // remarkPlugins: [remarkMath],
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          // editUrl:
+          //   'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+
         },
         blog: {
           showReadingTime: true,
@@ -80,7 +86,7 @@ const config = {
         theme: {
           customCss: './src/css/custom.css',
         },
-      }),
+      },
     ],
   ],
 
@@ -110,12 +116,12 @@ const config = {
           src: 'img/logo.svg',
         },
         items: [
-          {
-            type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
-            position: 'left',
-            label: 'Table of Contents',
-          },
+          // {
+          //   type: 'docSidebar',
+          //   sidebarId: 'tutorialSidebar',
+          //   position: 'left',
+          //   label: 'Table of Contents',
+          // },
         ],
       },
       footer: {
@@ -183,4 +189,13 @@ const config = {
     }),
 };
 
-export default config;
+// Add this at the end of the file:
+config.customFields = {
+  markdownPlugins: [
+    function (md) {
+      md.use(require('markdown-it-container'), 'custom');
+    },
+  ],
+};
+
+module.exports = config;

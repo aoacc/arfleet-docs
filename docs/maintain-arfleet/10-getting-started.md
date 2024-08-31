@@ -1,6 +1,6 @@
 # Getting Started
 
-ArFleet source code can be found at [https://github.com/aoacc/arfleet](https://github.com/aoacc/arfleet).
+ArFleet source code can be found in repositories at [https://github.com/aoacc](https://github.com/aoacc) starting with `arfleet-`.
 
 Feel free to contribute to the project by submitting pull requests or issues!
 

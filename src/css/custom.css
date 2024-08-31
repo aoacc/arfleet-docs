@@ -30,3 +30,15 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+
+
+.menu__list--nested {
+  margin-left: 1rem;
+  border-left: 1px solid var(--ifm-color-emphasis-300);
+  padding-left: 0.5rem;
+}
+
+.menu__link--sublist {
+  font-weight: var(--ifm-font-weight-semibold);
+}
