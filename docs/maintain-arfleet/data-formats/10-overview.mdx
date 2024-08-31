@@ -1,0 +1,119 @@
+# Overview
+
+*Status: Draft 0.1*
+
+This section explains how the data is passed to providers and stored in ArFleet.
+
+There are several standards involved, and the storage looks like a nested doll consisting of several layers.
+
+Care is needed to align all layers precisely.
+
+## ArFleet Reassembly Protocol
+
+Before we begin: multiple times we have to operate on chunks of data of different sizes. There are two challenges associated with this:
+
+1. To read the underlying data, we need to reassemble them into blobs of data prior to chunking them, and thus we need to store this information. The economic burden of storing this information should be on the client
+
+2. [ANS-104 DataItems](https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md) do not support partial data integrity proofs (e.g. for HTTP Range requests), since the final layer of DeepHash is a rolling SHA-384 hash of the whole data. We need a way to serve partial data in a trustless way, without burdening existing gateway infrastructure with immediate upgrades.
+
+This extra information is stored using ArFleet Reassembly Protocol.
+
+ArFleet Reassembly Protocol is a binary protocol encoding a manifest of a tree of chunk hashes to assemble them into a single blob of raw data of arbitrary size.
+
+It has the following structure:
+
+| Section | Size | Description |
+|---------|------|-------------|
+| **Header** | | |
+| Magic Bytes | 8 bytes | "arf::arp" |
+| ARP Version | 1 bytes | 0x01 for v1 |
+| Manifest Type | 1 byte | 0x00 for pointing to raw data, 0x01 for pointing to a DataItem, 0xff for pointing to a nested manifest |
+| Chunk Byte Size | 4 bytes | 32768 max |
+| Blob Byte Size | 8 bytes | 2^64 - 1 max (the final reassembled data is trimmed to this size if there are leftover bytes) |
+| **Body** | | |
+| Data Item ID *(only for manifest type == 0x01)* | 32 bytes | SHA-256 hash of the DataItem |
+| Owner Address *(only for manifest type == 0x01)* | 32 bytes | Address of the owner of the data and the signature |
+| Signature *(only for manifest type == 0x01)* | 512 bytes | RSA signature of the manifest |
+| Chunk Hashes | N * 32 bytes | SHA-256 chunk public chunk hashes |
+
+*Note:* The number of chunks N is implicit from: `N = ceil(blob byte size / chunk byte size)`
+
+ArFleet Reassembly Protocol manifest is stored at the same level of abstraction as the chunks it's pointing to.
+
+It might happen on occasion that the manifest itself is too large to fit into a single chunk at the level it's being encoded. In that case, the manifest would be split further, and a manifest with 0x01 type would be created to reassemble the previous one. This nesting can happen multiple times if the underlying data is very large, and the chunk size is very small.
+
+## Layers
+
+### 1. Placement
+
+> **Required:** *Yes*
+
+The outermost layer is the placement data. It's a Merkle tree of chunks of `PLACEMENT_CHUNK_SIZE` size (8192 bytes by default).
+
+The root hash of this tree is what gets signed in the Placement Deal and verification challenges are issued for it.
+
+> *Implementation detail*: To defend from the second preimage attack, the branch containing leafs is a hash over `[0x00 ++ left leaf ++ right leaf]`, else over `[left branch ++ right branch].
+
+### 2. RSA Encapsulation
+
+> **Required:** *No*
+
+Every `PLACEMENT_CHUNK_SIZE` byte is encrypted with RSA for anti-Sybil protection purposes (see [Replica Encryption](/docs/learn-arfleet/replica-encryption)).
+
+Clients supply the RSA public key to the providers, so that they can decrypt the data and serve it. If no key is provided or the key is invalid, providers still store and serve the placement chunks, but the data decryption is not attempted.
+
+The RSA is done:
+
+- in plain mode, not in hybrid mode
+- no padding scheme, except that data is 1 byte shorter than the key size, and the last byte is appended 0x00 as padding
+- uses encryption with the private key, and decryption with the public key
+
+RSA chunks are `RSA_CHUNK_SIZE` bytes long which corresponds to the chosen RSA key size (128 bytes (1024 bits) by default, for 1024-bit RSA keys).
+
+RSA chunks must align with placement chunks, meaning that an RSA chunk should never appear on the boundary of two placement chunks.
+
+The underlying data for RSA chunks must be split into chunks of `RSA_UNDERLYING_CHUNK_SIZE` bytes, which is 1 less byte than `RSA_CHUNK_SIZE` (127 bytes for 128-byte RSA).
+
+If the data is less than `RSA_UNDERLYING_CHUNK_SIZE` bytes, it is padded with 0x00 bytes from the end.
+
+Note: this will cause the decrypted data to have 0x00 bytes at the end as well, which needs to be taken into account when calculating the hash of underlying data chunks.
+
+RSA private keys can be thrown away by the client after the RSA chunks are encrypted and the public key is provided to the providers, as the private keys will never be needed again.
+
+### 3. Public Data (below RSA layer)
+
+Below RSA layer, the data is split into chunks of size `PUBLIC_CHUNK_SIZE` = `RSA_UNDERLYING_CHUNK_SIZE` * RSA chunks per placement chunk. For example, 64 RSA chunks of 128 bytes fit into a 8192 byte placement chunk, which means that the decrypted data will have the size of `PUBLIC_CHUNK_SIZE` = 127 * 64 = 8128 bytes.
+
+This chunk is hashed with SHA-256 and the hash is used to serve it. Providers might decided to decrypt it on the fly when needed, or to store cached decrypted versions.
+
+### 4. Public DataItem
+
+Since the public data chunks is still not the final data the user would need, we need a way to reassemble them into DataItems. DataItem specification can be found at https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md
+
+If a DataItem can fit into a single chunk, it will be encoded as a single chunk.
+
+Otherwise, ArFleet Reassembly Protocol will be used to signal how to reassemble the chunks into a blob of data. Then, ArFleet Reassembly Protocol manifest will be a part of the storage data, on the same level.
+
+Provider will scan the data to see if ArFleet Reassembly Protocol is present in any of the chunks. If it is, it will be used to get to the underlying data.
+
+If the underlying data is a valid DataItem, the provider will make a note, that the DataItem with this ID can now be accessible by accessing it through the manifest chunk with that SHA-256 hash. This way, DataItems of any size can be stored in their chunkified form.
+
+Optional headers like `ArFleet-DataItem-Type`, `ArFleet-Client` and `ArFleet-Client-Version` might be appended to the DataItem headers.
+
+### 5. AES Encapsulation
+
+The DataItem might have type: `ArFleet-DataItem-Type: AES-256-Container`.
+
+In that case:
+
+If the provider doesn't have the private key, no further action is taken.
+
+If the user eventually publicly shared the AES-256 key, the provider attempts to decrypt it.
+
+The underlying data must be another DataItem, which is then indexed and served.
+
+### 6. Final Data
+
+The final data is inside the DataItem, which gets delivered to various applications that display it.
+
+If there is a signed manifest of a DataItem, this information can additionally be used to fulfill HTTP Range requests and provide data integrity proofs of arbitrary slices.

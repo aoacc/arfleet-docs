@@ -1,0 +1,9 @@
+{
+    "label": "Data Formats",
+    "position": 10,
+    "link": {
+      "type": "generated-index",
+      "description": "How the data is stored in ArFleet."
+    }
+  }
+  
