@@ -127,15 +127,15 @@ const config = {
       footer: {
         style: 'dark',
         links: [
-          {
-            // title: 'Docs',
-            // items: [
-            //   {
-            //     label: 'Table of Contents',
-            //     to: '/',
-            //   },
-            // ],
-          },
+          // {
+          //   // title: 'Docs',
+          //   // items: [
+          //   //   {
+          //   //     label: 'Table of Contents',
+          //   //     to: '/',
+          //   //   },
+          //   // ],
+          // },
           // {
           //   title: 'Docs',
           //   items: [
