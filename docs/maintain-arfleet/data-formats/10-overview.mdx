@@ -50,7 +50,7 @@ The outermost layer is the placement data. It's a Merkle tree of chunks of `PLAC
 
 The root hash of this tree is what gets signed in the Placement Deal and verification challenges are issued for it.
 
-> *Implementation detail*: To defend from the second preimage attack, the branch containing leafs is a hash over `[0x00 ++ left leaf ++ right leaf]`, else over `[left branch ++ right branch].
+> *Implementation detail*: To defend from the second preimage attack, the branch containing leafs is a hash over `[0x00 ++ left leaf ++ right leaf]`, else over `[left branch ++ right branch]`.
 
 ### 2. RSA Encapsulation
 
