@@ -161,7 +161,7 @@ const config = {
                 href: 'https://discord.gg/vYctEs7aTd',
               },
               {
-                label: 'Twitter',
+                label: 'X',
                 href: 'https://twitter.com/aoaccorg',
               },
             ],
@@ -170,7 +170,7 @@ const config = {
             title: 'More',
             items: [
               {
-                label: 'Website',
+                label: 'ArFleet Website',
                 to: 'https://arfleet.io',
               },
               {
