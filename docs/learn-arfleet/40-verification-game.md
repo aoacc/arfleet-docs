@@ -7,7 +7,7 @@ This section describes game theoretical properties of the verification challenge
 One of the concerns with such a simple verification mechanism might be:
 
 <blockquote>
-  <i>If I store 20 TB with a provider, and all they need to do is every 1-2 days send a challenge involving a small 4 KB chunk, won't we know for a long time if they removed a lot of my data?</i>
+  <i>If I store 20 TB with a provider, and all they need to do is every 1-2 hours send a challenge involving a small 4 KB chunk, won't we know for a long time if they removed a lot of my data?</i>
 <blockquote>
 </blockquote>
   <i>How can I know this from such small challenge sizes?</i>
@@ -31,6 +31,8 @@ What if you want to remove 1/4 instead of a half? Here's how the probabilities w
 | 2                    | 56.25%                            | 43.75%                        |
 | 3                    | 42.1875%                          | 57.8125%                      |
 | 4                    | 31.640625%                        | 68.359375%                    |
+| ...                  | ...                               | ...                           |
+| 20                   | 0.317124%                         | 99.682876%                    |
 
 The general formula for the probability of not getting caught after n challenges, when a fraction f of data has been removed, is:
 
