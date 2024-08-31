@@ -31,7 +31,7 @@ It has the following structure:
 | Chunk Byte Size | 4 bytes | 32768 max |
 | Blob Byte Size | 8 bytes | 2^64 - 1 max (the final reassembled data is trimmed to this size if there are leftover bytes) |
 | **Body** | | |
-| Data Item ID *(only for manifest type == 0x01)* | 32 bytes | SHA-256 hash of the DataItem |
+| Data Item ID *(only for manifest type == 0x01)* | 32 bytes | ID of the DataItem, according to ANS-104 |
 | Owner Address *(only for manifest type == 0x01)* | 32 bytes | Address of the owner of the data and the signature |
 | Signature *(only for manifest type == 0x01)* | 512 bytes | RSA signature of the manifest |
 | Chunk Hashes | N * 32 bytes | SHA-256 chunk public chunk hashes |
