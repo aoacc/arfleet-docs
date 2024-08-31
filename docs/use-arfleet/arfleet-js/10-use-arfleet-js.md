@@ -28,6 +28,12 @@ Go back to the project directory
    ```
 ### Running the Application
 
+You can use `./arfleet` script to run the commands.
+
+:::warning
+On Windows, you would have to use `node arfleet client` instead of `./arfleet client` for instance.
+:::
+
 Run:
 
 ```bash
